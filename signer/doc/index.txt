@@ -1,0 +1,62 @@
+Since there is no official specification to the protocol used by the original
+signer, this documentation aims at providing some notes on how it operates.
+
+While the code is provided under the GPL-3+ license, the documentation itself
+(everything in this directory and its subdirectories) is actually available
+under the (much more permissive) CC0 license, you can read about the license and
+consult its conditions at https://creativecommons.org/about/cc0 and
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Contents
+--------
+
+- key.txt: describes the layout of the key storage and how to decrypt it
+- protocol.txt: describes the protocol framing and the messages that are used by
+  both client and server
+- login.txt: describes the login handshake and the authentication method
+- signature.txt: describes the messages used in obtaining pending transactions
+  and communicating an authenticated confirmation/rejection
+- re_notes.txt: describes the steps necessary to intercept the communication
+  between a client and server - follow at your own risk (security and legal, see
+  below)
+
+Security
+--------
+
+This software lets you manipulate real-world accounts with real-world money. It
+is important that you understand that the developer(s) cannot be liable for any
+damages arising from you trusting your keys/passwords to the application or from
+bugs contained within. In fact, I strongly discourage you from using this with a
+real world account.
+
+If following the notes in re_notes.txt to put an intercepting proxy in place, it
+is your responsibility to make sure that proxy verifies the bank certificates
+when connecting to it. Not doing so will leave you open to a MITM attack
+potentially allowing someone to eavesdrop on your confidential information.
+
+Legal
+-----
+
+Please note that to the best of my knowledge, this documentation and code has
+been created without any access to the copyrighted content possibly apart from
+the procedures outlined in the file re_notes.txt. While being a single person
+observing and implementing that protocol precludes making this a cleanroom
+implementation, I have tried to make sure it still does not infringe on the
+original application's copyright and believe I have succeeded.
+
+Therefore, the intent of the specification is twofold. It serves as basis to
+developing this software and in case the implementation is ever attacked on
+copyright grounds by the original application's owner, it should be more likely
+than the actual code to withstand it. That might still allow for a true
+cleanroom implementation if needed. However, please consult your lawyer first.
+
+That all said, it is not my intention to harm the original implementation or
+complete with it in any way. I have undertaken all this work to create a niche
+client that fulfills use cases not required by common users (using multi-purpose
+keys for interaction with a bank, GUI-less) and/or which are not easily solvable
+in the context of a company where the software is just a by-product and any such
+requests would be rightfully considered feature creep and unacceptable.
+
+If you are a copyright/trademark holder and believe any code here infringes on
+your rights, please do get in touch with me and I will make every attempt to
+address your concerns.

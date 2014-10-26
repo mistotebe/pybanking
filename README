@@ -1,0 +1,27 @@
+Tools to make interacting with the APIs of Fio Banka easier for those who do
+not want to use the API Plus app (it is a GUI after all) or, in the case of
+signer, want use the more standard ways of maintaining their keys.
+
+fioread
+-------
+
+Application (and a Python module) to display the last transactions for an
+account in a terminal.
+
+Based on the official spec at http://www.fio.cz/docs/cz/API_Bankovnictvi.pdf
+with some guesswork as not all the fields are adequately specified for the json
+field order/names.
+
+The module does not implement the complete API, only retrieves the list of
+transactions since the last retrieval and lays them out in a useful format.
+
+signer
+------
+
+A stub to document the "new" fiosign protocol (introduced around April 2013).
+
+The intent is to create a library that makes it possible to interact with the
+user's gpg-agent using the Assuan protocol and let them set up a GPG (sub)key
+for use when they interact with the bank. Deferring to a gpg agent lets the
+library not worry about the key at all, so that it can even exist on a
+smartcard.
