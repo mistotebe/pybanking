@@ -1,0 +1,98 @@
+Connection
+----------
+
+The client opens a TCP connection to millenium.fio.cz on port 443 and
+establishes a TLS secure channel on the socket, after which point the server
+sends the first 'Hello' message announcing the protocol version. This document
+describes version 1.0 of the protocol.
+
+Framing
+-------
+
+The connection carries messages delimited by a '\002' (ASCII STX) character at the
+beginning, then a 4-byte big endian length of the encapsulated message, followed
+by a '\003' (ASCII ETX) character. It seems unlikely there are more than one
+such message encapsulated in one STX-ETX pair (as in
+STX-length1-message1-length2-message2...-ETX).
+
+Phases
+------
+
+The server announces the protocol version first, to which the client responds
+with the protocl version it implements and also identifies the user and public
+key it wishes to use. This is not the SHA256 fingerprint that the client (and
+the Fio system when generating an enrollment contract when setting up) outputs
+as the public key hash!
+
+As server is considered authenticated by the fact that the TLS handshake
+completed and server certificate matches the one stored in the client, what
+remains is client authentication. If the combination of a public key and
+username match a record in the system, the server sends an authentication
+challenge, the client is supposed to sign the challenge data and respond with
+the signature, proving their identity. Server responds whether the
+authentication has been successful.
+
+When authenticated, the client can do the following:
+- request the list of actions to be signed (while the client sets a limit of
+  100, it seems that the server cannot respond with more than one pending action
+  at the moment)
+- send a ping message that the server will respond to, notifying the client of
+  any of the following:
+  - the client should wake up
+  - a new action is available for signing
+  - the connection should be closed now
+
+The official client will send the list request immediately after it receives a
+confirmation that the login has been successful, then a ping request every 10
+seconds afterwards.
+
+Messages
+--------
+
+The protocol directory contains XML schemas for all known messages:
+
+Server Hello (server_hello.xsd):
+- announces the (lowest/highest?) protocol version the server speaks in the
+  'version' attribute
+
+Client Hello (client_hello.xsd):
+- announces:
+  - the (lowest/highest?) protocol version the client can speak in the
+  'protocolVersion' attribute
+  - the username in the 'username' attribute
+  - fingerprint of the RSA public key (see key.txt for details) in the
+    'publicKeyFingerprint' attribute
+  - proxy type in the 'proxyType' attribute, which can take one of the following
+    values:
+    - NONE: direct connection
+    - 
+  - the proxy information in the 'proxyValue':
+    -
+
+REJECTION?
+
+Server Challenge (login_challenge.xsd):
+- confirms the server knows the username and the public key pair are known to
+  the server
+- prompts the client to sign the challenge data provided (base64 encoded) in the
+  'challenge' attribute
+
+Client Response (login_signature.xsd):
+- proves to the server that the client has access to the secret key
+  corresponding to the public key 
+
+Authentication result (login_result.xsd):
+- notifies the client of the authentication result
+
+Order list request (order_list_request.xsd):
+- requests a list of pending transactions to sign, limited to 'maxItems' items
+
+Order list response (order_list.xsd):
+- returns transactions that are pending and can be signed, seems to be limited
+  to one transaction regardless of how many are actually pending and how many
+  the client had requested
+- each 'Order' child element holds one transaction in WYSIWYS (what you see is
+  what you sign) format, plus the transaction id is copied into the 'id'
+  attribute.
+
+
